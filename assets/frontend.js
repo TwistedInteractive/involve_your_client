@@ -23,17 +23,20 @@ jQuery(function(){
     });
 
     $("#iyc_commentform form").submit(function(){
-        var name = $("input[name=name]", this).val();
-        var comment = $("textarea[name=comment]", this).val();
+        var name = $("input[name=iyc_name]", this).val();
+        var comment = $("textarea[name=iyc_comment]", this).val();
+
+        var data = $(this).serialize();
+
         if(name != '' && comment != '')
         {
             // POST an AJAX-call
             $("#iyc_loader").show();
-            $.post(window.location, {iyc_name: name, iyc_comment: comment}, function(data){
+            $.post(window.location, data, function(response){
                 $("#iyc_commentform textarea").val('');
                 $("#iyc_commentform").slideUp();
                 $("#iyc_loader").hide();
-                $("#iyc_comments").prepend(data);
+                $("#iyc_comments").prepend(response);
             });
         } else {
             alert('Both fields are required');
@@ -77,6 +80,17 @@ jQuery(function(){
         var h = $(window).height() > $(document).height() ? $(window).height() : $(document).height();
         $("#iyc_box").height(h);
     }).resize();
+
+    // Check if there is a hash-tag set:
+    if(window.location.hash != '')
+    {
+        if(window.location.hash.match(/iyc_comment/))
+        {
+            $("#iyc_box a.toggle").click();
+            id_comment = window.location.hash.split('iyc_comment:')[1];
+            $("div.iyc_comment[rel=" + id_comment + "]").addClass("active");
+        }
+    }
 });
 
 function replaceLineBreaks()

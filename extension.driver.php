@@ -51,12 +51,33 @@ Class extension_involve_your_client extends Extension
         if(isset($_POST['iyc_comment']))
         {
             $name    = General::sanitize($_POST['iyc_name']);
+            $email   = General::sanitize($_POST['iyc_email']);
             $comment = General::sanitize($_POST['iyc_comment']);
             if(!empty($name) && !empty($comment))
             {
                 $id_page = $this->_pageData['id'];
-                setcookie('iyc_name', $name, time() + 7776000, '/'); // remember for three months
-                $id_comment = $this->saveComment($id_page, $name, $comment);
+                setcookie('iyc_name', $name, time() + 15552000, '/');   // remember for six months
+                setcookie('iyc_email', $email, time() + 15552000, '/'); // remember for six months
+                $id_comment = $this->saveComment($id_page, $name, $email, $comment);
+                // See if there are members that need a notification:
+                if(isset($_POST['iyc_notify']))
+                {
+                    $protocol  = Frontend::Configuration()->get('default_gateway', 'email');
+                    $fromEmail = Frontend::Configuration()->get('from_address', 'email_'.$protocol);
+                    $fromName  = Frontend::Configuration()->get('from_name', 'email_'.$protocol);
+                    $pageInfo  = Symphony::Database()->fetchRow(0, 'SELECT `title`, `handle`, `path` FROM `tbl_pages` WHERE `id` = '.$id_page);
+                    $pageName  = $pageInfo['title'];
+                    $pageURL   = URL.'/';
+                    if($pageInfo['path'] != null) {
+                        $pageURL .= $pageInfo['path'].'/';
+                    }
+                    $pageURL .= $pageInfo['handle'].'/';
+
+                    foreach($_POST['iyc_notify'] as $email)
+                    {
+                        General::sendEmail($email, $fromEmail, $fromName, $name.' gave a comment on: '.$pageName, $pageURL.'#iyc_comment:'.$id_comment);
+                    }
+                }
                 echo $this->generateCommentHTML($id_comment);
             }
             die();
@@ -92,7 +113,8 @@ Class extension_involve_your_client extends Extension
         </head>', $context['output']);
 
         // Add some custom code to the body:
-        $commentName = isset($_COOKIE['iyc_name']) ? $_COOKIE['iyc_name'] : '';
+        $commentName  = isset($_COOKIE['iyc_name']) ? $_COOKIE['iyc_name'] : '';
+        $commentEmail = isset($_COOKIE['iyc_email']) ? $_COOKIE['iyc_email'] : '';
         $comments = $this->getComments($this->_pageData['id']);
         $commentCount = count($comments);
         $commentStr = $commentCount == 1 ? 'comment' : 'comments';
@@ -119,9 +141,22 @@ Class extension_involve_your_client extends Extension
                         </div>
                         <form method="post" action="">
                             <label>Your name: </label>
-                            <input type="text" name="name" value="'.$commentName.'" />
+                            <input type="text" name="iyc_name" value="'.$commentName.'" />
+                            <label>Your e-mail address: </label>
+                            <input type="text" name="iyc_email" value="'.$commentEmail.'" />
                             <label>Comment:</label>
-                            <textarea rows="6" cols="20" name="comment"></textarea>
+                            <textarea rows="6" cols="20" name="iyc_comment"></textarea>
+        ';
+        $commenters = $this->getUniqueCommenters();
+        if(!empty($commenters))
+        {
+            $html .= '<label>Notify:</label>';
+            foreach($commenters as $commenter)
+            {
+                $html .= '<label><input type="checkbox" name="iyc_notify[]" value="'.$commenter['email'].'"/> '.$commenter['author'].'</label>';
+            }
+        }
+        $html .= '
                             <input type="submit" value="send" />
                         </form>
                     </div>
@@ -151,6 +186,16 @@ Class extension_involve_your_client extends Extension
     }
 
     /**
+     * Get an array with unique commenters.
+     * @return array    2-dimensional array with author and e-mail
+     */
+    public function getUniqueCommenters()
+    {
+        $result = Symphony::Database()->fetch('SELECT DISTINCT `email`, `author` FROM `tbl_iyc_comments` WHERE `email` != \'\' GROUP BY `email` ORDER BY `author` ASC;');
+        return $result;
+    }
+
+    /**
      * Generate the HTML of a comment
      * @param  $id_comment      The ID of the comment
      * @param bool $developer   Is the current user an author? if true, show a delete-link with the comment.
@@ -160,7 +205,7 @@ Class extension_involve_your_client extends Extension
     {
         $result = Symphony::Database()->fetch('SELECT * FROM `tbl_iyc_comments` WHERE `id` = '.$id_comment.' ORDER BY `date` DESC;');
         $comment = $result[0];
-        $html = '<div class="iyc_comment">
+        $html = '<div class="iyc_comment" rel="'.$id_comment.'">
             <h3><strong>'.$comment['author'].'</strong> at <em>'.date('j-n-Y G:i:s', $comment['date']).'</em>:';
         if($developer) {
             $html .= '<a href="#" class="iyc_delete_comment" rel="'.$id_comment.'">Delete</a>';
@@ -186,14 +231,16 @@ Class extension_involve_your_client extends Extension
      * Save a comment and return it's ID
      * @param  $id_page     The ID of the page
      * @param  $author      The name of the author
+     * @param  $email       The e-mail address of the author
      * @param  $comment     The comment
      * @return int          The ID of the comment
      */
-    public function saveComment($id_page, $author, $comment)
+    public function saveComment($id_page, $author, $email, $comment)
     {
         Symphony::Database()->insert(array(
             'id_page' => $id_page,
             'author' => $author,
+            'email' => $email,
             'comment' => $comment,
             'date' => time()
         ), 'tbl_iyc_comments');
@@ -255,6 +302,7 @@ Class extension_involve_your_client extends Extension
             `id_page` INT(255) unsigned NOT NULL,
             `author` TINYTEXT NOT NULL,
             `date` TINYTEXT NOT NULL,
+            `email` TINYTEXT NOT NULL,
             `comment` MEDIUMTEXT NOT NULL,
         PRIMARY KEY (`id`),
         KEY `id_page` (`id_page`)
