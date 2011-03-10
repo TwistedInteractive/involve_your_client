@@ -5,7 +5,7 @@ Author: Giel Berkers
 Website: http://www.gielberkers.com
 E-mail: info@gielberkers.com
 
-## What does this extension do? #
+## What does this extension do? ##
 
 This extension allows your client (or team mates) to add comments to pages of your site. There is no signup required to use this system.
 
@@ -21,3 +21,4 @@ and providing a simple comments system.
 
 - This extension uses cookies to store some information (such as the name of the comment-author). When cookies are disabled, experience may differ.
 - Don't forget to disable / uninstall this extension when the site goes live ;-)
+- Only when you are logged in as a developer you are able to edit the summary and delete the comments

@@ -4,7 +4,9 @@ Class extension_involve_your_client extends Extension
 {
 	private $_pageData;
 
-	// About this extension:
+	/**
+     * About this extension:
+     */
 	public function about()
 	{
 		return array(
@@ -19,7 +21,9 @@ Class extension_involve_your_client extends Extension
 		);
 	}
 
-	// Set the delegates:
+	/**
+     * Set the delegates:
+     */
 	public function getSubscribedDelegates()
 	{
 		return array(
@@ -36,6 +40,11 @@ Class extension_involve_your_client extends Extension
 		);
 	}
 
+    /**
+     * Initialize the page. Here there are various checks for POST-data. This is because the javascript makes AJAX-calls to the page to perform specific actions
+     * @param  $context     The context object provided by Symphony.
+     * @return void
+     */
     public function initialize($context)
     {
         $this->_pageData = $context['page']->pageData();
@@ -69,6 +78,11 @@ Class extension_involve_your_client extends Extension
         }
     }
 
+    /**
+     * Inject script-tags in the headers and adds the HTML to show the iyc_box.
+     * @param  $context     The context provided by Symphony.
+     * @return void
+     */
     public function injectScript($context)
     {
         // Add some custom code to the header:
@@ -97,7 +111,7 @@ Class extension_involve_your_client extends Extension
                 <span class="comments">'.$commentCount.' '.$commentStr.'</span>
                 <div id="iyc_content">
                     <h1>Summary'.$editLink.'</h1>
-                    <p class="summary">'.$this->getSummary($this->_pageData['id']).'</p>
+                    <p class="summary" id="iyc_summary">'.str_replace("\n", '<br />', $this->getSummary($this->_pageData['id'])).'</p>
                     <h2>Comments <a href="#" id="iyc_add_comment">Add comment</a></h2>
                     <div id="iyc_commentform">
                         <div id="iyc_loading">
@@ -125,12 +139,23 @@ Class extension_involve_your_client extends Extension
         $context['output'] = str_replace('</body>', $html, $context['output']);
     }
 
+    /**
+     * Get the comments of a page
+     * @param  $id_page     The ID of the page
+     * @return array        An array with ID's of comments
+     */
     public function getComments($id_page)
     {
         $result = Symphony::Database()->fetchCol('id', 'SELECT `id` FROM `tbl_iyc_comments` WHERE `id_page` = '.$id_page.' ORDER BY `date` DESC;');
         return $result;
     }
 
+    /**
+     * Generate the HTML of a comment
+     * @param  $id_comment      The ID of the comment
+     * @param bool $developer   Is the current user an author? if true, show a delete-link with the comment.
+     * @return string           The HTML of the comment
+     */
     public function generateCommentHTML($id_comment, $developer = false)
     {
         $result = Symphony::Database()->fetch('SELECT * FROM `tbl_iyc_comments` WHERE `id` = '.$id_comment.' ORDER BY `date` DESC;');
@@ -138,7 +163,7 @@ Class extension_involve_your_client extends Extension
         $html = '<div class="iyc_comment">
             <h3><strong>'.$comment['author'].'</strong> at <em>'.date('j-n-Y G:i:s', $comment['date']).'</em>:';
         if($developer) {
-            $html .= '<a href="#" id="iyc_delete_comment" rel="'.$id_comment.'">Delete</a>';
+            $html .= '<a href="#" class="iyc_delete_comment" rel="'.$id_comment.'">Delete</a>';
         }
         $html .= '</h3>
             <p>'.str_replace("\n", '<br />', $comment['comment']).'</p>
@@ -146,12 +171,24 @@ Class extension_involve_your_client extends Extension
         return $html;
     }
 
+    /**
+     * Get the summary of a page
+     * @param  $id_page     The ID of the page
+     * @return string       The summary
+     */
     public function getSummary($id_page)
     {
         $summary = Symphony::Database()->fetchVar('summary', 0, 'SELECT `summary` FROM `tbl_iyc_pages` WHERE `id_page` = '.$id_page);
         return $summary;
     }
 
+    /**
+     * Save a comment and return it's ID
+     * @param  $id_page     The ID of the page
+     * @param  $author      The name of the author
+     * @param  $comment     The comment
+     * @return int          The ID of the comment
+     */
     public function saveComment($id_page, $author, $comment)
     {
         Symphony::Database()->insert(array(
@@ -164,11 +201,22 @@ Class extension_involve_your_client extends Extension
         return $id;
     }
 
+    /**
+     * Delete a comment
+     * @param  $id_comment  The ID of the comment
+     * @return void
+     */
     public function deleteComment($id_comment)
     {
         Symphony::Database()->delete('tbl_iyc_comments', '`id` = '.$id_comment);
     }
 
+    /**
+     * Save the summary
+     * @param  $id_page     The ID of the page
+     * @param  $summary     The summary
+     * @return void
+     */
     public function saveSummary($id_page, $summary)
     {
         $total = Symphony::Database()->fetchVar('total', 0, 'SELECT COUNT(*) AS `total` FROM `tbl_iyc_pages` WHERE `id_page` = '.$id_page.';');

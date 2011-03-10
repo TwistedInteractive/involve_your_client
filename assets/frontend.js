@@ -1,3 +1,6 @@
+String.prototype.nl2br = function() { return this.replace( /\r\n|\r|\n/mg, '<br />'); }
+String.prototype.br2nl = function() { return this.replace( /\<br(\s*\/|)\>|\<BR\>/mg, "\r\n"); }
+
 var iyc_visible = false;
 var edit_summary = false;
 
@@ -41,8 +44,8 @@ jQuery(function(){
     $("#iyc_edit_summary").click(function(){
         if(!edit_summary)
         {
-            var summary = $("p.summary").html().replace(/<br>/g, "\n");
-
+            // var summary = $("p.summary").html().replace(/<br>/g, "\n");
+            var summary = $("p.summary").html().br2nl();
             $("p.summary").replaceWith('<div id="iyc_edit"><textarea rows="5" cols="20" name="summary">' + summary + '</textarea><a href="#" id="iyc_save_changes">Save Changes</a></div>');
             $("#iyc_save_changes").click(function(){
                 var summary = $("textarea[name=summary]").val();
@@ -51,10 +54,11 @@ jQuery(function(){
                 });
                 return false;
             });
+            $("textarea[name=summary]").focus();
             edit_summary = true;
         } else {
             var summary = $("textarea[name=summary]").val();
-            $("#iyc_edit").replaceWith('<p class="summary">' + summary + '</p>');
+            $("#iyc_edit").replaceWith('<p class="summary">' + summary.nl2br() + '</p>');
             edit_summary = false;
             replaceLineBreaks();
         }
@@ -62,7 +66,7 @@ jQuery(function(){
     });
     replaceLineBreaks();
 
-    $("#iyc_delete_comment").click(function(){
+    $(".iyc_delete_comment").click(function(){
         var id_comment = $(this).attr("rel");
         $(this).parent().parent().remove();
         $.post(window.location, {iyc_delete_comment: id_comment});
@@ -77,7 +81,8 @@ jQuery(function(){
 
 function replaceLineBreaks()
 {
-    var text = jQuery("p.summary").text();
-    var html = text.replace(/\n/g, '<br />');
-    jQuery("p.summary").html(html);
+    var text = jQuery("p.summary")[0].innerHTML;
+    jQuery("p.summary").html(text.nl2br());
+    
 }
+
