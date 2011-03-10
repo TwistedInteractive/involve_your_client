@@ -1,0 +1,56 @@
+html { overflow-x: hidden; }
+
+#iyc_box { width: 400px; position: absolute; z-index: 9999; top: 0; right: -400px; height: 100%; background: #000;
+    -webkit-box-shadow: 0px 0px 20px rgba(0, 0, 0, .5);
+    -moz-box-shadow: 0px 0px 20px rgba(0, 0, 0, .5);
+    -o-box-shadow: 0px 0px 20px rgba(0, 0, 0, .5);
+    box-shadow: 0px 0px 20px rgba(0, 0, 0, .5);
+}
+#iyc_box a.toggle { width: 90px; height: 90px; font-size: 40px; text-align: center;  color: #fff; display: block; position: absolute; margin-left: -90px; top: 10px; background: #000 url("comment-icon.png") 13px 13px no-repeat; outline: none; text-indent: -1000em;
+    -webkit-box-shadow: 0px 0px 20px rgba(0, 0, 0, .5);
+    -moz-box-shadow: 0px 0px 20px rgba(0, 0, 0, .5);
+    -o-box-shadow: 0px 0px 20px rgba(0, 0, 0, .5);
+    box-shadow: 0px 0px 20px rgba(0, 0, 0, .5);
+    -webkit-border-radius: 10px 0 0 10px;
+    -moz-border-radius: 10px 0 0 10px;
+    -o-border-radius: 10px 0 0 10px;
+    border-radius: 10px 0 0 10px;
+}
+
+#iyc_box span.comments { display: block; width: 80px; padding: 10px 0 10px 10px; height: 10px; position: absolute; top: 110px; margin-left: -90px; text-align: center; color: #fff; font-weight: bold; font-size: 10px; background: #000;
+    -webkit-box-shadow: 0px 0px 20px rgba(0, 0, 0, .5);
+    -moz-box-shadow: 0px 0px 20px rgba(0, 0, 0, .5);
+    -o-box-shadow: 0px 0px 20px rgba(0, 0, 0, .5);
+    box-shadow: 0px 0px 20px rgba(0, 0, 0, .5);
+    -webkit-border-radius: 10px 0 0 10px;
+    -moz-border-radius: 10px 0 0 10px;
+    -o-border-radius: 10px 0 0 10px;
+    border-radius: 10px 0 0 10px;
+}
+
+#iyc_content { padding: 10px; }
+#iyc_content h1, #iyc_content h2, #iyc_content h3, #iyc_content p { color: #fff; border: none; margin-bottom: 16px; font-weight: normal; }
+#iyc_content p { font-size: 12px; line-height: 18px; }
+#iyc_content h1 { font-size: 26px; color: #ffcc33; }
+#iyc_content h2 { font-size: 18px; color: #ffcc33; }
+#iyc_content h3 { font-size: 12px; margin-bottom: 5px; color: #999; }
+
+#iyc_content div.iyc_comment { border-bottom: 1px dotted #666; margin-bottom: 16px; }
+
+#iyc_add_comment, #iyc_edit_summary, #iyc_save_changes, #iyc_delete_comment { float: right; font-size: 10px; color: #fff; font-weight: bold; background: #08e; padding: 5px;
+    -webkit-border-radius: 10px;
+    -moz-border-radius: 10px;
+    -o-border-radius: 10px;
+    border-radius: 10px;
+}
+#iyc_add_comment:hover, #iyc_edit_summary:hover, #iyc_save_changes:hover, #iyc_delete_comment:hover { background: #09f; }
+#iyc_save_changes { float: none; display: block; margin-bottom: 16px; width: 100px; text-align: center; margin-left: 270px; }
+
+#iyc_commentform { margin-bottom: 16px; display: none; }
+#iyc_commentform label { color: #fff; font-size: 12px; display: block; margin-bottom: 0; }
+#iyc_commentform input[type=text], #iyc_content textarea { border: none; padding: 5px; width: 370px; font-family: sans-serif; font-size: 12px; }
+#iyc_content textarea { height: 140px; }
+#iyc_commentform input[type=submit] { margin-left: 280px; width: 100px; padding: 5px; }
+
+#iyc_loading { position: absolute; width: 380px; background: rgba(0, 0, 0, .75); height: 240px; display: none; }
+#iyc_loading img { position: relative; left: 172px; top: 115px; }
