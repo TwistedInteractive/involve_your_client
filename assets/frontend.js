@@ -88,7 +88,7 @@ jQuery(function(){
         {
             $("#iyc_box a.toggle").click();
             id_comment = window.location.hash.split('iyc_comment:')[1];
-            $("div.iyc_comment[rel=" + id_comment + "]").addClass("active");
+            $("div.iyc_comment[id=iyc_comment_" + id_comment + "]").addClass("active");
         }
     }
 });

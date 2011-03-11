@@ -126,7 +126,6 @@ Class extension_involve_your_client extends Extension
             $developer = false;
         }
         $editLink = $developer ? ' <a href="#" id="iyc_edit_summary">Edit</a>' : '';
-
         $html = '
             <div id="iyc_box">
                 <a href="#" class="toggle">?!</a>
@@ -139,7 +138,7 @@ Class extension_involve_your_client extends Extension
                         <div id="iyc_loading">
                             <img src="'.URL.'/extensions/involve_your_client/assets/ajax-loader.gif" />
                         </div>
-                        <form method="post" action="">
+                        <form method="post" action="'.URL.'">
                             <label>Your name: </label>
                             <input type="text" name="iyc_name" value="'.$commentName.'" />
                             <label>Your e-mail address: </label>
@@ -205,7 +204,7 @@ Class extension_involve_your_client extends Extension
     {
         $result = Symphony::Database()->fetch('SELECT * FROM `tbl_iyc_comments` WHERE `id` = '.$id_comment.' ORDER BY `date` DESC;');
         $comment = $result[0];
-        $html = '<div class="iyc_comment" rel="'.$id_comment.'">
+        $html = '<div class="iyc_comment" id="iyc_comment_'.$id_comment.'">
             <h3><strong>'.$comment['author'].'</strong> at <em>'.date('j-n-Y G:i:s', $comment['date']).'</em>:';
         if($developer) {
             $html .= '<a href="#" class="iyc_delete_comment" rel="'.$id_comment.'">Delete</a>';
