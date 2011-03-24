@@ -1,6 +1,6 @@
 html { overflow-x: hidden; }
 
-#iyc_box { width: 400px; position: absolute; z-index: 9999; top: 0; right: -400px; height: 100%; background: #000;
+#iyc_box { width: 400px; position: absolute; z-index: 9999; top: 0; right: -400px; height: 100%; background: #000; font-family: sans-serif;
     -webkit-box-shadow: 0px 0px 20px rgba(0, 0, 0, .5);
     -moz-box-shadow: 0px 0px 20px rgba(0, 0, 0, .5);
     -o-box-shadow: 0px 0px 20px rgba(0, 0, 0, .5);
@@ -37,7 +37,7 @@ html { overflow-x: hidden; }
 #iyc_content div.iyc_comment { border-bottom: 1px dotted #666; margin-bottom: 16px; }
 #iyc_content div.iyc_comment.active { background: #048; width: 380px; padding: 10px; position: relative; left: -10px; border: none; }
 
-#iyc_add_comment, #iyc_edit_summary, #iyc_save_changes, .iyc_delete_comment { float: right; font-size: 10px; color: #fff; font-weight: bold; background: #08e; padding: 5px; outline: none;
+#iyc_add_comment, #iyc_edit_summary, #iyc_save_changes, .iyc_delete_comment { float: right; font-size: 10px; color: #fff; font-weight: bold; background: #08e; padding: 5px; outline: none; text-decoration: none;
     -webkit-border-radius: 10px;
     -moz-border-radius: 10px;
     -o-border-radius: 10px;
