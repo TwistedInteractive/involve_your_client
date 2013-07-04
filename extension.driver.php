@@ -14,9 +14,8 @@ Class extension_involve_your_client extends Extension
 			'version' => '1.0',
 			'release-date' => '2011-03-09',
 			'author' => array(
-				'name' => 'Giel Berkers',
-				'website' => 'http://www.gielberkers.com',
-				'email' => 'info@gielberkers.com'),
+				'name' => 'Twisted Interactive',
+				'website' => 'http://www.twisted.nl'),
 			'description' => 'Involve your clients in your Symphony projects!'
 		);
 	}
